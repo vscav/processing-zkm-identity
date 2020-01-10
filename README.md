@@ -1,5 +1,5 @@
 # logo_ZKM_processing
-> On the basis of generative and algorithmic aesthetics, and by being attentive to color systems (Johanes Iten, Joseph Albers), we think, create, program and generate a new design for the logo of the exhibition 'Writting the History of the Future' from ZKM cultural institution.
+> On the basis of generative and algorithmic aesthetics, and by being attentive to color systems (Johanes Iten, Joseph Albers), we think, create, program and generate a new design for the logo of the exhibition *Writting the History of the Future* from *ZKM* cultural institution.
 
 ## How to use
 1. Install Processing software 
