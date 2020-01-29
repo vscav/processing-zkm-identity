@@ -2,7 +2,8 @@
 import processing.sound.*;
 
 /** Processing font class */
-PFont font;
+PFont text;
+String content = "W R I T I N G\nT H E  H I S T O R Y  O F\nT H E  F U T U R E";
 
 /** Processing graphics and rendering context class */
 PGraphics pg;
@@ -33,13 +34,6 @@ Organic[] organics;
 /** Number of organic shapes */
 final int SHAPES_COUNT = 110;
 
-/** Kinetic text declaration */
-Kinetic text;
-
-/** Number of tiles on the X and Y axes */
-final int TILES_X = 50;
-final int TILES_Y = 8;
-
 /** Logo images path */
 final String LOGOS_PATH = "logos/";
 
@@ -47,16 +41,13 @@ final String LOGOS_PATH = "logos/";
 final String LOGOS_COUNT = "########";
 
 void setup() {
-  /** Font creation (place in the main directory) */
-  font = createFont("assets/Hind-SemiBold.ttf", 600/18);
-  /** Create a new reference of Kinetic text object */
-  text = new Kinetic();
   /** Size of the canvas (the third parameter specify a P2D renderer) */
-  size(600, 600, P2D);
-  /** Create a new PGraphics object */
-  pg = createGraphics(600, 600, P2D);
-  /** Canvas background color */
-  background(13, 13, 13);
+  fullScreen();
+  
+  /** Text initialization */
+  text = createFont("assets/CODE-Bold.otf", width/24);
+  textFont(text);
+  textAlign(LEFT);
   
   /** Change variable initialization */
   change = 0;
@@ -66,8 +57,6 @@ void setup() {
   
   /** Microphone input stream creation (which is routed into the Amplitude analyzer) */
   mic = new AudioIn(this, 0);
-  /** Start capturing the input stream and route it to the audio output */
-  mic.play();
   /** Define the audio input (microphone input) for the analyzer */
   amp.input(mic);
   
@@ -76,37 +65,41 @@ void setup() {
   
   /** For loop to fill organics array */
   for (int i = 0; i < SHAPES_COUNT; i++) {
-    organics[i] = new Organic(0.1 + 1 * i, 180, 300, i, i * random(90), colors[floor(random(6))]);
+    organics[i] = new Organic(0.08 + 2 * i,width/2.8,height/2, i, i * random(90), colors[floor(random(6))]);
   }
 }      
 
 void draw() {
-  /** New background every sequence (to hide previous Organic shapes) */
-  background(13, 13, 13);
+  /** New background (white) every sequence (to hide previous Organic shapes) */
+  background(255);
+  /** To apply a black background, uncomment the line below */
+  //background(13);
   
   /** For loop to animate Organic objects */
   for (int i = 0; i < organics.length; i++) {
       /** Organic class show function is called */
       organics[i].show(change);
   }
-
-  /** PGraphics initialization and specification */
-  pg.beginDraw();
-  pg.background(0, 0, 0, 0);
-  pg.fill(255);
-  pg.textFont(font);
-  pg.translate(350, 600/2);
-  pg.textAlign(LEFT, CENTER);
-  /** Text definition */
-  pg.text("Writing\nthe history\nof the future.", 0, 0);
-  pg.endDraw();
-
-  /** Animation of Kinetic text */
-  text.anim();
-
+  
+  /* Text update */
+  fill(13);
+  /** To apply a white color to the font, uncomment the line below */
+  //fill(255);
+  
+  text(content, width/3, height/2.2);
+    
   /** Sound analizing result is added to change variable */
   change += amp.analyze();
+  
+  if(amp.analyze() > 0.42) {setup();}
+  
 }
+
+/** mouseClicked function */
+/*void mouseClicked() {
+  /** Call the main setup function to generate new colors and shapes 
+  //setup();
+}*/
 
 /** keyPressed function */
 void keyPressed() {
@@ -122,11 +115,11 @@ void keyPressed() {
 /** Organic class */
 class Organic {
   /** Organic class parameters declaration */
-  int xpos, ypos, roughness;
-  float radius, angle; 
+  int roughness;
+  float radius, angle, xpos, ypos; 
   color col;
   /** Organic class constructor */
-  Organic (float radius, int xpos, int ypos, int roughness, float angle, color col) {  
+  Organic (float radius, float xpos, float ypos, int roughness, float angle, color col) {  
     this.radius = radius;
     this.xpos = xpos;
     this.ypos = ypos; 
@@ -162,38 +155,5 @@ class Organic {
     /** End (then create the shape) */
     endShape();
     pop();
-  }
-}
-
-/** Kinetic class */
-class Kinetic {
-  /** Kinetic class anim function */
-  void anim(){
-    int tileW = int(600/TILES_X);
-    int tileH = int(600/TILES_Y);
-
-    for (int y = 0; y < TILES_Y; y++) {
-      for (int x = 0; x < TILES_X; x++) {
-        /** Warp */
-        int wave = int(sin(frameCount * 0.05 + ( x * y ) * 0.1) * 3.5);
-        /** Uncomment the line below (and comment the line above) to avoid text effect */
-        //int wave = 0;
-      
-        /** Source (position and dimension) */
-        int sx = x*tileW + wave;
-        int sy = (int)y*tileH + wave;
-        int sw = tileW;
-        int sh = tileH;
-
-        /** Destination (position and dimension) */
-        int dx = x*tileW;
-        int dy = y*tileH;
-        int dw = tileW;
-        int dh = tileH;
-      
-        /** Apply new destination and new dimension */
-        copy(pg, sx, sy, sw, sh, dx, dy, dw, dh);
-      }
-    }
   }
 }
